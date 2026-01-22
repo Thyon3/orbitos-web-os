@@ -28,6 +28,7 @@ import FilemanagerApp from '@/pages/apps/filemanager';
 import Calculator from '@/pages/apps/calculator';
 import AppStoreApp from '@/pages/apps/appstore';
 import RecycleBinApp from '@/pages/apps/recyclebin';
+import ClipboardApp from '@/pages/apps/clipboard';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -39,6 +40,7 @@ const appComponents = {
   calculator: Calculator,
   appstore: AppStoreApp,
   recyclebin: RecycleBinApp,
+  clipboard: ClipboardApp,
   'tab-manager': TabManager,
 };
 

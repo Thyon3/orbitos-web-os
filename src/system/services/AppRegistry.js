@@ -8,6 +8,7 @@ import FilemanagerApp from '../apps/FilemanagerApp';
 import Calculator from '../apps/Calculator';
 import AppStoreApp from '../apps/AppStoreApp';
 import RecycleBin from '../apps/RecycleBin';
+import ClipboardManagerApp from '../apps/ClipboardManagerApp';
 
 /**
  * A central registry for all available applications.
@@ -25,6 +26,7 @@ class AppRegistry {
       Calculator,
       AppStoreApp,
       RecycleBin,
+      ClipboardManagerApp,
     ];
   }
 
