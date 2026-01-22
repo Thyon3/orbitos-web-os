@@ -8,6 +8,7 @@ import { NotificationProvider } from '@/system/services/NotificationRegistry';
 import { SettingsProvider } from '@/context/SettingsContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { DriveProvider } from '@/context/DriveContext';
+import { SearchProvider } from '@/context/SearchContext';
 
 // We will use one function for our app wrapper
 export default function MyApp({ Component, pageProps }) {
@@ -19,7 +20,9 @@ export default function MyApp({ Component, pageProps }) {
             <CollaborationProvider>
               <SettingsProvider>
                 <DriveProvider>
-                  <Component {...pageProps} />
+                  <SearchProvider>
+                    <Component {...pageProps} />
+                  </SearchProvider>
                 </DriveProvider>
               </SettingsProvider>
             </CollaborationProvider>

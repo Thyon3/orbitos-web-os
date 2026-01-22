@@ -58,6 +58,12 @@ const userSchema = new mongoose.Schema({
       installedAt: { type: Date, default: Date.now },
     },
   ],
+  searchHistory: [
+    {
+      query: { type: String, required: true },
+      timestamp: { type: Date, default: Date.now },
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

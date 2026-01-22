@@ -5,12 +5,14 @@ import { useApp } from '@/context/AppContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useSettings } from '@/context/SettingsContext';
 import { useAuth } from '@/context/AuthContext';
+import { useSearch } from '@/context/SearchContext';
 
 import AppIcon from './AppIcon';
 import Window from './Window';
 import EnhancedWindow from './EnhancedWindow';
 import Taskbar from './Taskbar';
 import AvatarEditor from './AvatarEditor';
+import GlobalSearch from './GlobalSearch';
 import TopBarService from '@/system/services/TopBarService';
 import TopBarDropdownService from '@/system/services/TopBarDropdownService';
 import TopBarInfoAboutService from '@/system/services/TopBarInfoAboutService';
@@ -25,6 +27,7 @@ import MonitorApp from '@/pages/apps/monitor';
 import FilemanagerApp from '@/pages/apps/filemanager';
 import Calculator from '@/pages/apps/calculator';
 import AppStoreApp from '@/pages/apps/appstore';
+import RecycleBinApp from '@/pages/apps/recyclebin';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -35,6 +38,7 @@ const appComponents = {
   filemanager: FilemanagerApp,
   calculator: Calculator,
   appstore: AppStoreApp,
+  recyclebin: RecycleBinApp,
   'tab-manager': TabManager,
 };
 
@@ -101,6 +105,7 @@ export default function Desktop() {
   const { theme } = useTheme();
   const { wallpaper } = useSettings();
   const { user, refreshUser } = useAuth();
+  const { isSearchOpen, closeSearch } = useSearch();
   const [appPositions, setAppPositions] = useState({});
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
 
@@ -483,6 +488,9 @@ export default function Desktop() {
           onClose={() => setShowAvatarEditor(false)}
         />
       )}
+
+      {/* Global Search */}
+      <GlobalSearch isOpen={isSearchOpen} onClose={closeSearch} />
     </div>
   );
 }
