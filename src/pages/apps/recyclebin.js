@@ -1,5 +1,5 @@
-import RecycleBinApp from '@/system/apps/RecycleBinApp';
+import RecycleBinComponent from '@/system/apps/RecycleBinApp';
 
 export default function RecycleBinPage() {
-  return <RecycleBinApp />;
+  return <RecycleBinComponent />;
 }

@@ -12,6 +12,7 @@ import { SearchProvider } from '@/context/SearchContext';
 import { ClipboardProvider } from '@/context/ClipboardContext';
 import { ShortcutProvider } from '@/context/ShortcutContext';
 import { WallpaperProvider } from '@/context/WallpaperContext';
+import { DashboardProvider } from '@/context/DashboardContext';
 
 // We will use one function for our app wrapper
 export default function MyApp({ Component, pageProps }) {
@@ -27,7 +28,9 @@ export default function MyApp({ Component, pageProps }) {
                     <ClipboardProvider>
                       <ShortcutProvider>
                         <WallpaperProvider>
-                          <Component {...pageProps} />
+                          <DashboardProvider>
+                            <Component {...pageProps} />
+                          </DashboardProvider>
                         </WallpaperProvider>
                       </ShortcutProvider>
                     </ClipboardProvider>

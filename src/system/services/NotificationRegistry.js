@@ -278,10 +278,60 @@ export const NotificationProvider = ({ children }) => {
       <NotificationToastContainer 
         notifications={notifications} 
         onRemove={removeNotification}
-        onAction={(notificationId, action) => {
+        onAction={async (notificationId, action) => {
           // Handle notification action clicks
           console.log('Notification action:', notificationId, action);
-          // TODO: Implement action handling
+          
+          if (!action) return;
+
+          try {
+            // Handle different action types
+            if (action.action) {
+              // If action is a URL, navigate to it
+              if (action.action.startsWith('http://') || action.action.startsWith('https://')) {
+                window.open(action.action, '_blank');
+              } 
+              // If action is an internal route, use router
+              else if (action.action.startsWith('/')) {
+                window.location.href = action.action;
+              }
+              // If action is a function name, try to execute it
+              else if (typeof window[action.action] === 'function') {
+                window[action.action](notificationId, action);
+              }
+              // If action is an app ID, try to open the app
+              else if (action.action.startsWith('app:')) {
+                const appId = action.action.replace('app:', '');
+                // Dispatch custom event to open app
+                window.dispatchEvent(new CustomEvent('openApp', { detail: { appId } }));
+              }
+              // Handle custom action types
+              else {
+                // Dispatch custom event for action handling
+                window.dispatchEvent(new CustomEvent('notificationAction', {
+                  detail: { notificationId, action }
+                }));
+              }
+            }
+
+            // Mark the notification as actioned/dismissed after handling
+            removeNotification(notificationId);
+            
+            // If it's a persistent notification, update its status in the database
+            const notification = persistentNotifications.find(n => n._id === notificationId);
+            if (notification) {
+              await fetch(`/api/notifications/${notificationId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                  isDismissed: true,
+                  status: 'dismissed'
+                }),
+              });
+            }
+          } catch (error) {
+            console.error('Error handling notification action:', error);
+          }
         }}
       />
     </NotificationContext.Provider>
