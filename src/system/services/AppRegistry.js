@@ -32,6 +32,7 @@ class AppRegistry {
       ClipboardManagerApp,
       ShortcutsApp,
       NotificationCenterApp,
+      WallpaperManagerApp,
     ];
   }
 

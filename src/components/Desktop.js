@@ -33,6 +33,7 @@ import RecycleBinApp from '@/pages/apps/recyclebin';
 import ClipboardApp from '@/pages/apps/clipboard';
 import ShortcutsApp from '@/pages/apps/shortcuts';
 import NotificationsApp from '@/pages/apps/notifications';
+import WallpapersApp from '@/pages/apps/wallpapers';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -47,6 +48,7 @@ const appComponents = {
   clipboard: ClipboardApp,
   shortcuts: ShortcutsApp,
   notifications: NotificationsApp,
+  wallpapers: WallpapersApp,
   'tab-manager': TabManager,
 };
 

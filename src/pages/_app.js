@@ -11,6 +11,7 @@ import { DriveProvider } from '@/context/DriveContext';
 import { SearchProvider } from '@/context/SearchContext';
 import { ClipboardProvider } from '@/context/ClipboardContext';
 import { ShortcutProvider } from '@/context/ShortcutContext';
+import { WallpaperProvider } from '@/context/WallpaperContext';
 
 // We will use one function for our app wrapper
 export default function MyApp({ Component, pageProps }) {
@@ -25,7 +26,9 @@ export default function MyApp({ Component, pageProps }) {
                   <SearchProvider>
                     <ClipboardProvider>
                       <ShortcutProvider>
-                        <Component {...pageProps} />
+                        <WallpaperProvider>
+                          <Component {...pageProps} />
+                        </WallpaperProvider>
                       </ShortcutProvider>
                     </ClipboardProvider>
                   </SearchProvider>
