@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Clipboard, Trash2, Pin, RefreshCw, Filter, Search } from 'lucide-react';
+import { Clipboard, Trash2, Pin, RefreshCw, Filter, Search, X } from 'lucide-react';
 import { useClipboard } from '@/context/ClipboardContext';
+import ClipboardItemPreview from './ClipboardItemPreview';
 
 export default function ClipboardManager() {
   const {
@@ -16,6 +17,8 @@ export default function ClipboardManager() {
 
   const [filterType, setFilterType] = useState('all');
   const [showPinnedOnly, setShowPinnedOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [previewItem, setPreviewItem] = useState(null);
 
   useEffect(() => {
     // Reload items when filters change
@@ -28,6 +31,20 @@ export default function ClipboardManager() {
     }
     loadClipboardItems(filters);
   }, [filterType, showPinnedOnly, loadClipboardItems]);
+
+  // Filter items based on search query
+  const filteredItems = clipboardItems.filter((item) => {
+    if (!searchQuery) return true;
+    
+    const query = searchQuery.toLowerCase();
+    const contentMatch = item.content?.toLowerCase().includes(query);
+    const previewMatch = item.preview?.toLowerCase().includes(query);
+    const typeMatch = item.type?.toLowerCase().includes(query);
+    const languageMatch = item.language?.toLowerCase().includes(query);
+    const tagsMatch = item.tags?.some(tag => tag.toLowerCase().includes(query));
+    
+    return contentMatch || previewMatch || typeMatch || languageMatch || tagsMatch;
+  });
 
   const handleClearClipboard = async () => {
     if (confirm('Clear clipboard history? Pinned items will be kept.')) {
@@ -130,6 +147,26 @@ export default function ClipboardManager() {
           </div>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-3 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search clipboard items..."
+            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
         {/* Filters */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -156,12 +193,17 @@ export default function ClipboardManager() {
             />
             <span className="text-sm text-gray-700">Pinned only</span>
           </label>
+          {searchQuery && (
+            <span className="text-sm text-gray-500">
+              {filteredItems.length} result{filteredItems.length !== 1 ? 's' : ''}
+            </span>
+          )}
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-auto p-4">
-        {clipboardItems.length === 0 ? (
+        {filteredItems.length === 0 && !searchQuery ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-400">
             <Clipboard className="w-24 h-24 mb-4" />
             <p className="text-lg">No clipboard items</p>
@@ -169,14 +211,21 @@ export default function ClipboardManager() {
               Items you copy will appear here automatically
             </p>
           </div>
+        ) : filteredItems.length === 0 && searchQuery ? (
+          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+            <Search className="w-24 h-24 mb-4" />
+            <p className="text-lg">No results found</p>
+            <p className="text-sm">Try a different search term</p>
+          </div>
         ) : (
           <div className="grid gap-3">
-            {clipboardItems.map((item) => (
+            {filteredItems.map((item) => (
               <div
                 key={item._id}
-                className={`border rounded-lg p-4 hover:shadow-md transition-all ${
+                className={`border rounded-lg p-4 hover:shadow-md transition-all cursor-pointer ${
                   item.isPinned ? 'border-blue-300 bg-blue-50' : 'border-gray-200'
                 }`}
+                onClick={() => setPreviewItem(item)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -209,7 +258,10 @@ export default function ClipboardManager() {
                   </div>
                   <div className="flex flex-col gap-2 flex-shrink-0">
                     <button
-                      onClick={() => handleTogglePin(item._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTogglePin(item._id);
+                      }}
                       className={`p-2 rounded-lg transition-colors ${
                         item.isPinned
                           ? 'bg-blue-500 text-white hover:bg-blue-600'
@@ -220,7 +272,10 @@ export default function ClipboardManager() {
                       <Pin className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(item._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(item._id);
+                      }}
                       className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
                       title="Delete"
                     >
@@ -233,6 +288,14 @@ export default function ClipboardManager() {
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
+      {previewItem && (
+        <ClipboardItemPreview
+          item={previewItem}
+          onClose={() => setPreviewItem(null)}
+        />
+      )}
 
       {/* Stats Footer */}
       {stats && clipboardItems.length > 0 && (
