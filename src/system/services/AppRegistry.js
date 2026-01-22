@@ -9,6 +9,7 @@ import Calculator from '../apps/Calculator';
 import AppStoreApp from '../apps/AppStoreApp';
 import RecycleBin from '../apps/RecycleBin';
 import ClipboardManagerApp from '../apps/ClipboardManagerApp';
+import ShortcutsApp from '../apps/ShortcutsApp';
 
 /**
  * A central registry for all available applications.
@@ -27,6 +28,7 @@ class AppRegistry {
       AppStoreApp,
       RecycleBin,
       ClipboardManagerApp,
+      ShortcutsApp,
     ];
   }
 

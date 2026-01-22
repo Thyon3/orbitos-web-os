@@ -1,5 +1,5 @@
 // src/system/services/NotificationRegistry.js
-import { createContext, useContext, useState, useRef, useEffect } from 'react';
+import { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '@/context/ThemeContext';
 
 const NotificationContext = createContext();
@@ -13,10 +13,75 @@ export const useNotification = () => {
 };
 
 export const NotificationProvider = ({ children }) => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]); // Toast notifications
+  const [persistentNotifications, setPersistentNotifications] = useState([]); // Database notifications
   const [queue, setQueue] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
+  // Load persistent notifications from API
+  const loadNotifications = useCallback(async (filters = {}) => {
+    setLoading(true);
+    try {
+      const queryParams = new URLSearchParams();
+      if (filters.status) queryParams.append('status', filters.status);
+      if (filters.type) queryParams.append('type', filters.type);
+      if (filters.category) queryParams.append('category', filters.category);
+      if (filters.limit) queryParams.append('limit', filters.limit);
+
+      const response = await fetch(`/api/notifications?${queryParams.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPersistentNotifications(data.notifications || []);
+        setUnreadCount(data.unreadCount || 0);
+      }
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Create notification (both persistent and toast)
+  const createNotification = useCallback(async (notificationData) => {
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notificationData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Add to persistent notifications if it should be saved
+        if (notificationData.isPersistent) {
+          setPersistentNotifications(prev => [data.notification, ...prev]);
+          setUnreadCount(prev => prev + 1);
+        }
+
+        // Show as toast notification
+        showToast(
+          notificationData.title,
+          notificationData.type,
+          notificationData.isSticky ? 0 : 5000
+        );
+
+        return data.notification;
+      }
+    } catch (error) {
+      console.error('Error creating notification:', error);
+      throw error;
+    }
+  }, []);
+
+  // Simple toast notification (temporary, not saved to database)
   const showNotification = (message, type = 'info', duration = 5000) => {
+    showToast(message, type, duration);
+  };
+
+  // Internal toast handler
+  const showToast = (message, type = 'info', duration = 5000) => {
     const id = Date.now();
     const notification = { id, message, type, duration };
     
@@ -29,6 +94,106 @@ export const NotificationProvider = ({ children }) => {
       }
     });
   };
+
+  // Update notification status
+  const updateNotification = useCallback(async (notificationId, updates) => {
+    try {
+      const response = await fetch(`/api/notifications/${notificationId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Update local state
+        setPersistentNotifications(prev => 
+          prev.map(n => n._id === notificationId ? data.notification : n)
+        );
+
+        // Update unread count if marked as read
+        if (updates.isRead === true) {
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        } else if (updates.isRead === false) {
+          setUnreadCount(prev => prev + 1);
+        }
+
+        return data.notification;
+      }
+    } catch (error) {
+      console.error('Error updating notification:', error);
+      throw error;
+    }
+  }, []);
+
+  // Delete notification
+  const deleteNotification = useCallback(async (notificationId) => {
+    try {
+      const response = await fetch(`/api/notifications/${notificationId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        const deletedNotification = persistentNotifications.find(n => n._id === notificationId);
+        
+        setPersistentNotifications(prev => prev.filter(n => n._id !== notificationId));
+        
+        // Update unread count if the deleted notification was unread
+        if (deletedNotification && !deletedNotification.isRead) {
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+      throw error;
+    }
+  }, [persistentNotifications]);
+
+  // Mark all as read
+  const markAllAsRead = useCallback(async () => {
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'markAllRead' }),
+      });
+
+      if (response.ok) {
+        setPersistentNotifications(prev => 
+          prev.map(n => ({ ...n, isRead: true, status: 'read' }))
+        );
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+      throw error;
+    }
+  }, []);
+
+  // Clear all notifications
+  const clearAllNotifications = useCallback(async () => {
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'dismissAll' }),
+      });
+
+      if (response.ok) {
+        setPersistentNotifications([]);
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+      throw error;
+    }
+  }, []);
+
+  // Load notifications on mount
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
   
   const removeNotification = (id) => {
     setNotifications(prev => {
@@ -46,9 +211,33 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <NotificationContext.Provider value={{ showNotification }}>
+    <NotificationContext.Provider 
+      value={{ 
+        // Toast notifications
+        showNotification,
+        
+        // Persistent notifications
+        persistentNotifications,
+        unreadCount,
+        loading,
+        loadNotifications,
+        createNotification,
+        updateNotification,
+        deleteNotification,
+        markAllAsRead,
+        clearAllNotifications,
+      }}
+    >
       {children}
-      <NotificationToaster notifications={notifications} onRemove={removeNotification} />
+      <NotificationToastContainer 
+        notifications={notifications} 
+        onRemove={removeNotification}
+        onAction={(notificationId, action) => {
+          // Handle notification action clicks
+          console.log('Notification action:', notificationId, action);
+          // TODO: Implement action handling
+        }}
+      />
     </NotificationContext.Provider>
   );
 };

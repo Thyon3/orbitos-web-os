@@ -7,6 +7,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { useAuth } from '@/context/AuthContext';
 import { useSearch } from '@/context/SearchContext';
 import { useClipboardListener } from '@/hooks/useClipboardListener';
+import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts';
 
 import AppIcon from './AppIcon';
 import Window from './Window';
@@ -30,6 +31,7 @@ import Calculator from '@/pages/apps/calculator';
 import AppStoreApp from '@/pages/apps/appstore';
 import RecycleBinApp from '@/pages/apps/recyclebin';
 import ClipboardApp from '@/pages/apps/clipboard';
+import ShortcutsApp from '@/pages/apps/shortcuts';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -42,6 +44,7 @@ const appComponents = {
   appstore: AppStoreApp,
   recyclebin: RecycleBinApp,
   clipboard: ClipboardApp,
+  shortcuts: ShortcutsApp,
   'tab-manager': TabManager,
 };
 
@@ -114,6 +117,9 @@ export default function Desktop() {
 
   // Enable clipboard listener to auto-capture copy events
   useClipboardListener({ enabled: true, autoSave: true });
+
+  // Enable global shortcuts
+  useGlobalShortcuts({ enabled: true });
 
   const desktopApps = AppRegistry.getAllApps();
 

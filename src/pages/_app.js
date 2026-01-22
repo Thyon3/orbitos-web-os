@@ -10,6 +10,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { DriveProvider } from '@/context/DriveContext';
 import { SearchProvider } from '@/context/SearchContext';
 import { ClipboardProvider } from '@/context/ClipboardContext';
+import { ShortcutProvider } from '@/context/ShortcutContext';
 
 // We will use one function for our app wrapper
 export default function MyApp({ Component, pageProps }) {
@@ -23,7 +24,9 @@ export default function MyApp({ Component, pageProps }) {
                 <DriveProvider>
                   <SearchProvider>
                     <ClipboardProvider>
-                      <Component {...pageProps} />
+                      <ShortcutProvider>
+                        <Component {...pageProps} />
+                      </ShortcutProvider>
                     </ClipboardProvider>
                   </SearchProvider>
                 </DriveProvider>
