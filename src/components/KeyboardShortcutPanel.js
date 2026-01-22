@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useShortcuts } from '@/context/ShortcutContext';
 
-export default function KeyboardShortcutPanel() {
+export default function KeyboardShortcutPanel({ onEditShortcut }) {
   const {
     shortcuts,
     groupedShortcuts,
@@ -304,7 +304,7 @@ export default function KeyboardShortcutPanel() {
                               )}
                             </button>
                             <button
-                              onClick={() => setEditingShortcut(shortcut)}
+                              onClick={() => onEditShortcut?.(shortcut)}
                               className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
                               title="Edit"
                             >
@@ -344,7 +344,7 @@ export default function KeyboardShortcutPanel() {
             <span>Custom: {shortcuts.filter(s => s.isCustom).length}</span>
           </div>
           <button
-            onClick={() => setEditingShortcut({ isNew: true })}
+            onClick={() => onEditShortcut?.({ isNew: true })}
             className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
