@@ -1,6 +1,9 @@
 // src/system/services/NotificationRegistry.js
 import { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '@/context/ThemeContext';
+import { useNotificationSound } from '@/hooks/useNotificationSound';
+import { useNotificationPermissions } from '@/hooks/useNotificationPermissions';
+import { shouldShowNotification, createNotificationData } from '@/utils/notificationUtils';
 
 const NotificationContext = createContext();
 
@@ -18,6 +21,17 @@ export const NotificationProvider = ({ children }) => {
   const [queue, setQueue] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [settings, setSettings] = useState({
+    enabled: true,
+    sound: true,
+    browser: false,
+    categories: {},
+    priorities: {},
+  });
+
+  // Initialize sound and permissions hooks
+  const { playSound } = useNotificationSound(settings);
+  const { showBrowserNotification, isPermissionGranted } = useNotificationPermissions();
 
   // Load persistent notifications from API
   const loadNotifications = useCallback(async (filters = {}) => {
@@ -75,8 +89,40 @@ export const NotificationProvider = ({ children }) => {
     }
   }, []);
 
-  // Simple toast notification (temporary, not saved to database)
+  // Enhanced notification with sound and browser support
   const showNotification = (message, type = 'info', duration = 5000) => {
+    const notificationData = createNotificationData({
+      title: message.length > 50 ? message.substring(0, 47) + '...' : message,
+      message: message,
+      type,
+      duration,
+    });
+
+    // Check if notification should be shown based on settings
+    if (!shouldShowNotification(notificationData, settings)) {
+      return;
+    }
+
+    // Play sound if enabled
+    if (settings.sound) {
+      playSound(type);
+    }
+
+    // Show browser notification if enabled and permission granted
+    if (settings.browser && isPermissionGranted()) {
+      try {
+        showBrowserNotification(notificationData.title, {
+          message: notificationData.message,
+          icon: notificationData.icon,
+          tag: notificationData.id,
+          duration: duration,
+        });
+      } catch (error) {
+        console.warn('Failed to show browser notification:', error);
+      }
+    }
+
+    // Show toast notification
     showToast(message, type, duration);
   };
 

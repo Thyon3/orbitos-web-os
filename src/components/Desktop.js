@@ -32,6 +32,7 @@ import AppStoreApp from '@/pages/apps/appstore';
 import RecycleBinApp from '@/pages/apps/recyclebin';
 import ClipboardApp from '@/pages/apps/clipboard';
 import ShortcutsApp from '@/pages/apps/shortcuts';
+import NotificationsApp from '@/pages/apps/notifications';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -45,6 +46,7 @@ const appComponents = {
   recyclebin: RecycleBinApp,
   clipboard: ClipboardApp,
   shortcuts: ShortcutsApp,
+  notifications: NotificationsApp,
   'tab-manager': TabManager,
 };
 

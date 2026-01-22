@@ -10,6 +10,8 @@ import AppStoreApp from '../apps/AppStoreApp';
 import RecycleBin from '../apps/RecycleBin';
 import ClipboardManagerApp from '../apps/ClipboardManagerApp';
 import ShortcutsApp from '../apps/ShortcutsApp';
+import NotificationCenterApp from '../apps/NotificationCenterApp';
+import WallpaperManagerApp from '../apps/WallpaperManagerApp';
 
 /**
  * A central registry for all available applications.
@@ -29,6 +31,7 @@ class AppRegistry {
       RecycleBin,
       ClipboardManagerApp,
       ShortcutsApp,
+      NotificationCenterApp,
     ];
   }
 
