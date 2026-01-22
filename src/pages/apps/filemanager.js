@@ -227,31 +227,96 @@ export default function FileManagerApp() {
   };
   
   const handleDelete = async (fileId, filename, isOwner) => {
-    if (!confirm(`Are you sure you want to ${isOwner ? 'delete' : 'unshare'} "${filename}"?`)) {
+    if (!isOwner) {
+      // For shared files, unshare them
+      if (!confirm(`Are you sure you want to unshare "${filename}"?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/files/${fileId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to unshare file');
+        }
+
+        const result = await response.json();
+        
+        setLocalItems(prev => prev.filter(item => (item.id !== fileId && item._id !== fileId)));
+        
+        showNotification(result.message, 'success');
+        await fetchLocalItems();
+      } catch (error) {
+        console.error('Unshare file failed:', error);
+        showNotification(error.message, 'error');
+      }
+      return;
+    }
+
+    // For owned files, move to trash
+    if (!confirm(`Move "${filename}" to Recycle Bin?`)) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/files/${fileId}`, {
+      // Get file details first
+      const file = localItems.find(item => (item.id === fileId || item._id === fileId));
+      
+      if (!file) {
+        throw new Error('File not found');
+      }
+
+      // Move to trash
+      const trashResponse = await fetch('/api/trash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileId: fileId,
+          name: file.name,
+          content: file.content || '',
+          fileType: 'file',
+          originalPath: '/files',
+          size: file.content ? file.content.length : 0,
+          metadata: {
+            lastModified: file.lastModified,
+            collaborators: file.collaborators || [],
+            isPublic: file.isPublic || false,
+          },
+        }),
+      });
+
+      if (!trashResponse.ok) {
+        const errorData = await trashResponse.json();
+        throw new Error(errorData.error || 'Failed to move to trash');
+      }
+
+      // Now delete the original file
+      const deleteResponse = await fetch(`/api/files/${fileId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Failed to ${isOwner ? 'delete' : 'unshare'} file`);
+      if (!deleteResponse.ok) {
+        const errorData = await deleteResponse.json();
+        throw new Error(errorData.error || 'Failed to delete file');
       }
 
-      const result = await response.json();
-      
       setLocalItems(prev => prev.filter(item => (item.id !== fileId && item._id !== fileId)));
       
-      showNotification(result.message, 'success');
+      showNotification(`"${filename}" moved to Recycle Bin`, 'success');
       await fetchLocalItems();
     } catch (error) {
-      console.error('Delete file failed:', error);
+      console.error('Move to trash failed:', error);
       showNotification(error.message, 'error');
     }
   };
