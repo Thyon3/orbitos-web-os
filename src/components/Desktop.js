@@ -6,6 +6,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useSettings } from '@/context/SettingsContext';
 import { useAuth } from '@/context/AuthContext';
 import { useSearch } from '@/context/SearchContext';
+import { useClipboardListener } from '@/hooks/useClipboardListener';
 
 import AppIcon from './AppIcon';
 import Window from './Window';
@@ -110,6 +111,9 @@ export default function Desktop() {
   const { isSearchOpen, closeSearch } = useSearch();
   const [appPositions, setAppPositions] = useState({});
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
+
+  // Enable clipboard listener to auto-capture copy events
+  useClipboardListener({ enabled: true, autoSave: true });
 
   const desktopApps = AppRegistry.getAllApps();
 

@@ -9,6 +9,7 @@ import { SettingsProvider } from '@/context/SettingsContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { DriveProvider } from '@/context/DriveContext';
 import { SearchProvider } from '@/context/SearchContext';
+import { ClipboardProvider } from '@/context/ClipboardContext';
 
 // We will use one function for our app wrapper
 export default function MyApp({ Component, pageProps }) {
@@ -21,7 +22,9 @@ export default function MyApp({ Component, pageProps }) {
               <SettingsProvider>
                 <DriveProvider>
                   <SearchProvider>
-                    <Component {...pageProps} />
+                    <ClipboardProvider>
+                      <Component {...pageProps} />
+                    </ClipboardProvider>
                   </SearchProvider>
                 </DriveProvider>
               </SettingsProvider>
