@@ -1,0 +1,81 @@
+{
+  "name": "web-os-project",
+  "version": "1.0.0",
+  "description": "A Web OS-style project for group collaboration",
+  "scripts": {
+    "dev": "next dev",
+    "dev:test-unapproved": "ORBIT_DEV_MODE=true next dev",
+    "build": "next build",
+    "start": "next start",
+    "dev:all": "npm test && npm run dev",
+    "test": "jest",
+    "prepare": "husky",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "bcryptjs": "^3.0.2",
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.18.0",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.2.1",
+    "framer-motion": "^12.23.16",
+    "googleapis": "^162.0.0",
+    "helmet": "^8.1.0",
+    "idb": "^8.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.545.0",
+    "mongoose": "^8.18.2",
+    "multer": "2.0.2",
+    "next": "^14.0.0",
+    "quill-delta": "^5.1.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-quill": "^2.0.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/react": "^14.0.0",
+    "@types/quill": "^2.0.14",
+    "autoprefixer": "^10.4.0",
+    "babel-jest": "^29.7.0",
+    "concurrently": "^8.2.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^16.1.6",
+    "postcss": "^8.4.0",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^3.3.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^framer-motion$": "<rootDir>/tests/__mocks__/framer-motion.js"
+    },
+    "transform": {
+      "^.+\\.(js|jsx)$": [
+        "babel-jest",
+        {
+          "presets": [
+            "next/babel"
+          ]
+        }
+      ]
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,json,md,css,scss}": "prettier --write"
+  }
+}
