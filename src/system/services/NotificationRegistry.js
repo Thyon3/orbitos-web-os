@@ -67,7 +67,7 @@ export const NotificationProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Add to persistent notifications if it should be saved
         if (notificationData.isPersistent) {
           setPersistentNotifications(prev => [data.notification, ...prev]);
@@ -130,7 +130,7 @@ export const NotificationProvider = ({ children }) => {
   const showToast = (message, type = 'info', duration = 5000) => {
     const id = Date.now();
     const notification = { id, message, type, duration };
-    
+
     setNotifications(prev => {
       if (prev.length < 5) {
         return [...prev, notification];
@@ -152,9 +152,9 @@ export const NotificationProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        
+
         // Update local state
-        setPersistentNotifications(prev => 
+        setPersistentNotifications(prev =>
           prev.map(n => n._id === notificationId ? data.notification : n)
         );
 
@@ -182,9 +182,9 @@ export const NotificationProvider = ({ children }) => {
 
       if (response.ok) {
         const deletedNotification = persistentNotifications.find(n => n._id === notificationId);
-        
+
         setPersistentNotifications(prev => prev.filter(n => n._id !== notificationId));
-        
+
         // Update unread count if the deleted notification was unread
         if (deletedNotification && !deletedNotification.isRead) {
           setUnreadCount(prev => Math.max(0, prev - 1));
@@ -206,7 +206,7 @@ export const NotificationProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        setPersistentNotifications(prev => 
+        setPersistentNotifications(prev =>
           prev.map(n => ({ ...n, isRead: true, status: 'read' }))
         );
         setUnreadCount(0);
@@ -240,28 +240,28 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     loadNotifications();
   }, [loadNotifications]);
-  
+
   const removeNotification = (id) => {
     setNotifications(prev => {
       const filtered = prev.filter(n => n.id !== id);
-      
+
       // If there's space and items in queue, move one from queue to notifications
       if (filtered.length < 5 && queue.length > 0) {
         const nextNotification = { ...queue[0], id: Date.now() };
         setQueue(q => q.slice(1));
         return [...filtered, nextNotification];
       }
-      
+
       return filtered;
     });
   };
 
   return (
-    <NotificationContext.Provider 
-      value={{ 
+    <NotificationContext.Provider
+      value={{
         // Toast notifications
         showNotification,
-        
+
         // Persistent notifications
         persistentNotifications,
         unreadCount,
@@ -275,64 +275,9 @@ export const NotificationProvider = ({ children }) => {
       }}
     >
       {children}
-      <NotificationToastContainer 
-        notifications={notifications} 
+      <NotificationToaster
+        notifications={notifications}
         onRemove={removeNotification}
-        onAction={async (notificationId, action) => {
-          // Handle notification action clicks
-          console.log('Notification action:', notificationId, action);
-          
-          if (!action) return;
-
-          try {
-            // Handle different action types
-            if (action.action) {
-              // If action is a URL, navigate to it
-              if (action.action.startsWith('http://') || action.action.startsWith('https://')) {
-                window.open(action.action, '_blank');
-              } 
-              // If action is an internal route, use router
-              else if (action.action.startsWith('/')) {
-                window.location.href = action.action;
-              }
-              // If action is a function name, try to execute it
-              else if (typeof window[action.action] === 'function') {
-                window[action.action](notificationId, action);
-              }
-              // If action is an app ID, try to open the app
-              else if (action.action.startsWith('app:')) {
-                const appId = action.action.replace('app:', '');
-                // Dispatch custom event to open app
-                window.dispatchEvent(new CustomEvent('openApp', { detail: { appId } }));
-              }
-              // Handle custom action types
-              else {
-                // Dispatch custom event for action handling
-                window.dispatchEvent(new CustomEvent('notificationAction', {
-                  detail: { notificationId, action }
-                }));
-              }
-            }
-
-            // Mark the notification as actioned/dismissed after handling
-            removeNotification(notificationId);
-            
-            // If it's a persistent notification, update its status in the database
-            const notification = persistentNotifications.find(n => n._id === notificationId);
-            if (notification) {
-              await fetch(`/api/notifications/${notificationId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                  isDismissed: true,
-                  status: 'dismissed'
-                }),
-              });
-            }
-          } catch (error) {
-            console.error('Error handling notification action:', error);
-          }
-        }}
       />
     </NotificationContext.Provider>
   );
@@ -344,21 +289,21 @@ const NotificationItem = ({ notification, theme, onRemove }) => {
   const [isExiting, setIsExiting] = useState(false);
   const timerRef = useRef(null);
   const startTimeRef = useRef(Date.now() + 500);
-  
+
   useEffect(() => {
     setTimeLeft(notification.duration - 500);
     startTimeRef.current = Date.now() + 500;
     setIsExiting(false);
     setIsPaused(false);
   }, [notification.id, notification.duration]);
-  
+
   useEffect(() => {
     const updateTimer = () => {
       if (!isPaused && !isExiting) {
         const elapsed = Date.now() - startTimeRef.current;
         const remaining = Math.max(0, notification.duration - 500 - elapsed);
         setTimeLeft(remaining);
-        
+
         if (remaining <= 0) {
           setIsExiting(true);
           setTimeout(() => onRemove(notification.id), 300);
@@ -367,11 +312,11 @@ const NotificationItem = ({ notification, theme, onRemove }) => {
       }
       timerRef.current = requestAnimationFrame(updateTimer);
     };
-    
+
     const timer = setTimeout(() => {
       timerRef.current = requestAnimationFrame(updateTimer);
     }, 500);
-    
+
     return () => {
       clearTimeout(timer);
       if (timerRef.current) {
@@ -379,25 +324,25 @@ const NotificationItem = ({ notification, theme, onRemove }) => {
       }
     };
   }, [isPaused, isExiting, notification.id, notification.duration, onRemove]);
-  
+
   const secondsLeft = Math.ceil(timeLeft / 1000);
   const progressPercent = (timeLeft / (notification.duration - 500)) * 100;
   const borderOpacity = Math.max(0.1, progressPercent / 100);
-  
+
   const formatMessage = (message) => {
     if (message.length <= 50) return message;
-    
+
     const firstLine = message.substring(0, 50);
     const remaining = message.substring(50);
-    
+
     if (remaining.length <= 47) {
       return `${firstLine}\n${remaining}`;
     }
-    
+
     const secondLine = remaining.substring(0, 47) + '...';
     return `${firstLine}\n${secondLine}`;
   };
-  
+
   return (
     <div
       className={`relative px-8 py-4 rounded-lg ${theme.notification} shadow-lg flex items-center gap-4 overflow-hidden`}
@@ -412,7 +357,7 @@ const NotificationItem = ({ notification, theme, onRemove }) => {
         startTimeRef.current = Date.now() - (notification.duration - 500 - timeLeft);
       }}
     >
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `linear-gradient(90deg, rgba(59, 130, 246, 0.5) ${100 - progressPercent}%, transparent ${100 - progressPercent}%)`
@@ -435,9 +380,9 @@ const NotificationItem = ({ notification, theme, onRemove }) => {
 
 const NotificationToaster = ({ notifications, onRemove }) => {
   const { theme } = useTheme();
-  
+
   return (
-    <div 
+    <div
       style={{
         position: 'fixed',
         top: '24px',
