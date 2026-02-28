@@ -14,7 +14,7 @@ const Terminal = () => {
   const [cwd, setCwd] = useState('~');
   const [user, setUser] = useState('user');
   const [host, setHost] = useState('orbitos');
-  
+
   const terminalRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -55,7 +55,7 @@ const Terminal = () => {
   shutdown  - Shutdown system`;
       }
     },
-    
+
     clear: {
       description: 'Clear terminal',
       execute: () => {
@@ -63,18 +63,18 @@ const Terminal = () => {
         return null;
       }
     },
-    
+
     pwd: {
       description: 'Print working directory',
       execute: () => cwd
     },
-    
+
     ls: {
       description: 'List directory contents',
       execute: (args) => {
         const files = ['Documents', 'Downloads', 'Pictures', 'Music', 'Videos', 'Desktop', 'Projects'];
         const dirs = ['bin', 'etc', 'home', 'lib', 'opt', 'tmp', 'usr', 'var'];
-        
+
         if (args.includes('-a')) {
           return [...dirs, ...files, '.hidden', '.config'].join('  ');
         } else if (args.includes('-l')) {
@@ -84,7 +84,7 @@ const Terminal = () => {
         }
       }
     },
-    
+
     cd: {
       description: 'Change directory',
       execute: (args) => {
@@ -103,7 +103,7 @@ const Terminal = () => {
         }
       }
     },
-    
+
     mkdir: {
       description: 'Create directory',
       execute: (args) => {
@@ -113,7 +113,7 @@ const Terminal = () => {
         return `Directory '${args[0]}' created`;
       }
     },
-    
+
     touch: {
       description: 'Create empty file',
       execute: (args) => {
@@ -123,7 +123,7 @@ const Terminal = () => {
         return `File '${args[0]}' created`;
       }
     },
-    
+
     rm: {
       description: 'Remove file or directory',
       execute: (args) => {
@@ -136,7 +136,7 @@ const Terminal = () => {
         return `Removed '${args[0]}'`;
       }
     },
-    
+
     cat: {
       description: 'Display file contents',
       execute: (args) => {
@@ -146,22 +146,42 @@ const Terminal = () => {
         return `Contents of '${args[0]}':\nThis is a sample file content.\nLorem ipsum dolor sit amet.`;
       }
     },
-    
+
     echo: {
       description: 'Display message',
       execute: (args) => args.join(' ')
     },
-    
+
     date: {
       description: 'Show current date and time',
       execute: () => new Date().toString()
     },
-    
+
     whoami: {
       description: 'Display current user',
       execute: () => user
     },
-    
+
+    fetch: {
+      description: 'Display system information (neofetch)',
+      execute: () => {
+        return `
+   #####     ${user}@${host}
+  #######    --------------
+  ##   ##    OS: OrbitOS v1.0.0
+  ##   ##    Host: Virtual Machine
+  ##   ##    Kernel: 5.15.0-orbit
+  #######    Uptime: 2 days, 4 hours
+   #####     Packages: 1240 (npm)
+             Shell: orbitsh 1.0
+             Resolution: 1920x1080
+             Theme: Orbit-Dark
+             CPU: Orbit Core v1 (8) @ 3.2GHz
+             Memory: 2048MiB / 8192MiB
+        `;
+      }
+    },
+
     uptime: {
       description: 'Show system uptime',
       execute: () => {
@@ -170,11 +190,11 @@ const Terminal = () => {
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
         const days = Math.floor(hours / 24);
-        
+
         return `System uptime: ${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
       }
     },
-    
+
     ps: {
       description: 'Show running processes',
       execute: () => `  PID TTY          TIME CMD
@@ -182,7 +202,7 @@ const Terminal = () => {
  5678 pts/0    00:00:02 node
  9012 pts/0    00:00:03 chrome`
     },
-    
+
     kill: {
       description: 'Kill process',
       execute: (args) => {
@@ -192,7 +212,7 @@ const Terminal = () => {
         return `Process ${args[0]} killed`;
       }
     },
-    
+
     nano: {
       description: 'Open text editor',
       execute: (args) => {
@@ -200,13 +220,13 @@ const Terminal = () => {
           return 'nano: missing filename';
         }
         // Open code editor
-        window.dispatchEvent(new CustomEvent('open-code-editor', { 
-          detail: { filename: args[0] } 
+        window.dispatchEvent(new CustomEvent('open-code-editor', {
+          detail: { filename: args[0] }
         }));
         return `Opening ${args[0]} in editor...`;
       }
     },
-    
+
     python: {
       description: 'Run Python interpreter',
       execute: (args) => {
@@ -220,7 +240,7 @@ Type "help", "copyright", "credits" or "license" for more information.
         }
       }
     },
-    
+
     node: {
       description: 'Run Node.js interpreter',
       execute: (args) => {
@@ -232,7 +252,7 @@ Type ".help" for more information.`;
         }
       }
     },
-    
+
     npm: {
       description: 'Run npm commands',
       execute: (args) => {
@@ -256,7 +276,7 @@ where <command> is one of:
         return `npm ${args.join(' ')} executed`;
       }
     },
-    
+
     git: {
       description: 'Run git commands',
       execute: (args) => {
@@ -270,7 +290,7 @@ where <command> is one of:
         return `git ${args.join(' ')} executed`;
       }
     },
-    
+
     curl: {
       description: 'Transfer data from URL',
       execute: (args) => {
@@ -280,7 +300,7 @@ where <command> is one of:
         return `Fetching data from ${args[0]}...`;
       }
     },
-    
+
     wget: {
       description: 'Download files from web',
       execute: (args) => {
@@ -290,7 +310,7 @@ where <command> is one of:
         return `Downloading ${args[0]}...`;
       }
     },
-    
+
     ping: {
       description: 'Test network connectivity',
       execute: (args) => {
@@ -302,7 +322,7 @@ where <command> is one of:
 64 bytes from ${args[0]}: icmp_seq=1 ttl=64 time=1.456 ms`;
       }
     },
-    
+
     ifconfig: {
       description: 'Show network configuration',
       execute: () => `eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
@@ -314,21 +334,21 @@ where <command> is one of:
         TX packets 5678  bytes 654321 (654.3 KiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0`
     },
-    
+
     df: {
       description: 'Show disk usage',
       execute: () => `Filesystem     1K-blocks    Used Available Use% Mounted on
 /dev/sda1       1048540672 524288064 524252608  50% /
 /dev/sda2       1048540672 262144032 786397640  25% /home`
     },
-    
+
     free: {
       description: 'Show memory usage',
       execute: () => `              total        used        free      shared  buff/cache   available
 Mem:           8192        2048        4096         256        2048        6144
 Swap:          2048           0        2048`
     },
-    
+
     top: {
       description: 'Show system processes',
       execute: () => `top - 12:34:56 up 1 day,  2:34,  2 users,  load average: 0.50, 0.30, 0.20
@@ -337,7 +357,7 @@ Tasks: 123 total,   1 running, 122 sleeping,   0 stopped,   0 zombie
 KiB Mem :   8192156 total,   2048000 used,   6144156 free,    256000 buffers
 KiB Swap:   2097148 total,        0 used,   2097148 free.   1024000 cached`
     },
-    
+
     reboot: {
       description: 'Reboot system',
       execute: () => {
@@ -347,7 +367,7 @@ KiB Swap:   2097148 total,        0 used,   2097148 free.   1024000 cached`
         return 'System rebooting in 2 seconds...';
       }
     },
-    
+
     shutdown: {
       description: 'Shutdown system',
       execute: () => {
