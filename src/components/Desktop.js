@@ -35,6 +35,7 @@ import ClipboardApp from '@/pages/apps/clipboard';
 import ShortcutsApp from '@/pages/apps/shortcuts';
 import NotificationsApp from '@/pages/apps/notifications';
 import WallpapersApp from '@/pages/apps/wallpapers';
+import WeatherApp from '@/pages/apps/weather';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -50,6 +51,7 @@ const appComponents = {
   shortcuts: ShortcutsApp,
   notifications: NotificationsApp,
   wallpapers: WallpapersApp,
+  weather: WeatherApp,
   'tab-manager': TabManager,
 };
 

@@ -12,6 +12,7 @@ import ClipboardManagerApp from '../apps/ClipboardManagerApp';
 import ShortcutsApp from '../apps/ShortcutsApp';
 import NotificationCenterApp from '../apps/NotificationCenterApp';
 import WallpaperManagerApp from '../apps/WallpaperManagerApp';
+import WeatherApp from '../apps/WeatherApp';
 
 /**
  * A central registry for all available applications.
@@ -33,6 +34,7 @@ class AppRegistry {
       ShortcutsApp,
       NotificationCenterApp,
       WallpaperManagerApp,
+      WeatherApp,
     ];
   }
 
