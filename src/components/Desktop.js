@@ -16,6 +16,8 @@ import Taskbar from './Taskbar';
 import AvatarEditor from './AvatarEditor';
 import GlobalSearch from './GlobalSearch';
 import ControlCenter from './ControlCenter';
+import ClockWidget from './widgets/ClockWidget';
+import WeatherWidget from './widgets/WeatherWidget';
 import TopBarService from '@/system/services/TopBarService';
 import TopBarDropdownService from '@/system/services/TopBarDropdownService';
 import TopBarInfoAboutService from '@/system/services/TopBarInfoAboutService';
@@ -460,6 +462,11 @@ export default function Desktop() {
         backgroundRepeat: 'no-repeat', // Prevents the image from tiling
       }}
     >
+      {/* Desktop Widgets Area */}
+      <div className="absolute top-20 left-10 flex flex-col pointer-events-none z-0">
+        <ClockWidget />
+        <WeatherWidget />
+      </div>
       {/* Desktop App Icons */}
       {desktopApps.map((app, index) => (
         <AppIcon
