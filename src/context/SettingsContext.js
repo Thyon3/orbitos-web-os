@@ -6,43 +6,51 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const defaultWallpapers = [
   '/backgrounds/orbit-default.jpg',
   '/backgrounds/orbit-default1.jpg',
-  
 ];
 
-// Ensure the context is created
 const SettingsContext = createContext();
 
 export function SettingsProvider({ children }) {
   const [wallpaper, setWallpaper] = useState(defaultWallpapers[0]);
+  const [volume, setVolume] = useState(80);
+  const [brightness, setBrightness] = useState(100);
+  const [isWifiEnabled, setIsWifiEnabled] = useState(true);
+  const [isBluetoothEnabled, setIsBluetoothEnabled] = useState(false);
 
   useEffect(() => {
     const savedWallpaper = localStorage.getItem('orbitos_wallpaper');
     if (savedWallpaper && defaultWallpapers.includes(savedWallpaper)) {
       setWallpaper(savedWallpaper);
     }
+
+    const savedSettings = JSON.parse(localStorage.getItem('orbitos_settings') || '{}');
+    if (savedSettings.volume !== undefined) setVolume(savedSettings.volume);
+    if (savedSettings.brightness !== undefined) setBrightness(savedSettings.brightness);
+    if (savedSettings.wifi !== undefined) setIsWifiEnabled(savedSettings.wifi);
+    if (savedSettings.bluetooth !== undefined) setIsBluetoothEnabled(savedSettings.bluetooth);
   }, []);
 
+  const saveSettings = (newSettings) => {
+    const currentSettings = JSON.parse(localStorage.getItem('orbitos_settings') || '{}');
+    localStorage.setItem('orbitos_settings', JSON.stringify({ ...currentSettings, ...newSettings }));
+  };
+
   const changeWallpaper = async (newWallpaper) => {
-    // Save locally first
     localStorage.setItem('orbitos_wallpaper', newWallpaper);
     setWallpaper(newWallpaper);
-    
-    // Save to server
+
     try {
       const response = await fetch('/api/auth/me');
       if (response.ok) {
         const { user } = await response.json();
-        
         const updatedPreferences = {
           ...user.preferences,
           wallpaper: newWallpaper
         };
-        
+
         await fetch('/api/users/preferences', {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ preferences: updatedPreferences }),
         });
       }
@@ -51,16 +59,41 @@ export function SettingsProvider({ children }) {
     }
   };
 
-  // --- CRITICAL PART ---
-  // Ensure you are creating this 'value' object and passing it to the provider.
+  const updateVolume = (val) => {
+    setVolume(val);
+    saveSettings({ volume: val });
+  };
+
+  const updateBrightness = (val) => {
+    setBrightness(val);
+    saveSettings({ brightness: val });
+  };
+
+  const toggleWifi = () => {
+    setIsWifiEnabled(!isWifiEnabled);
+    saveSettings({ wifi: !isWifiEnabled });
+  };
+
+  const toggleBluetooth = () => {
+    setIsBluetoothEnabled(!isBluetoothEnabled);
+    saveSettings({ bluetooth: !isBluetoothEnabled });
+  };
+
   const value = {
     wallpaper,
     changeWallpaper,
     availableWallpapers: defaultWallpapers,
+    volume,
+    updateVolume,
+    brightness,
+    updateBrightness,
+    isWifiEnabled,
+    toggleWifi,
+    isBluetoothEnabled,
+    toggleBluetooth,
   };
 
   return (
-    // And that the 'value' object is passed here.
     <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
