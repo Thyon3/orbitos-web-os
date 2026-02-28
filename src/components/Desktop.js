@@ -491,12 +491,19 @@ export default function Desktop() {
       <Taskbar
         onAvatarEdit={() => setShowAvatarEditor(true)}
         onControlCenterToggle={() => setIsControlCenterOpen(!isControlCenterOpen)}
+        onSpeechAssistantToggle={() => setIsSpeechAssistantOpen(!isSpeechAssistantOpen)}
       />
 
       {/* Control Center */}
       <ControlCenter
         isOpen={isControlCenterOpen}
         onClose={() => setIsControlCenterOpen(false)}
+      />
+
+      {/* Speech Assistant */}
+      <SpeechAssistant
+        isOpen={isSpeechAssistantOpen}
+        onClose={() => setIsSpeechAssistantOpen(false)}
       />
 
       {/* Avatar Editor */}
