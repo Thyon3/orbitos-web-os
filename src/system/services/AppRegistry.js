@@ -13,6 +13,7 @@ import ShortcutsApp from '../apps/ShortcutsApp';
 import NotificationCenterApp from '../apps/NotificationCenterApp';
 import WallpaperManagerApp from '../apps/WallpaperManagerApp';
 import WeatherApp from '../apps/WeatherApp';
+import MusicApp from '../apps/MusicApp';
 
 /**
  * A central registry for all available applications.
@@ -35,6 +36,7 @@ class AppRegistry {
       NotificationCenterApp,
       WallpaperManagerApp,
       WeatherApp,
+      MusicApp,
     ];
   }
 

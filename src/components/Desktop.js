@@ -36,6 +36,7 @@ import ShortcutsApp from '@/pages/apps/shortcuts';
 import NotificationsApp from '@/pages/apps/notifications';
 import WallpapersApp from '@/pages/apps/wallpapers';
 import WeatherApp from '@/pages/apps/weather';
+import MusicApp from '@/pages/apps/music';
 import TabManager from './TabManager';
 
 const appComponents = {
@@ -52,6 +53,7 @@ const appComponents = {
   notifications: NotificationsApp,
   wallpapers: WallpapersApp,
   weather: WeatherApp,
+  music: MusicApp,
   'tab-manager': TabManager,
 };
 
