@@ -16,6 +16,8 @@ import Taskbar from './Taskbar';
 import AvatarEditor from './AvatarEditor';
 import GlobalSearch from './GlobalSearch';
 import ControlCenter from './ControlCenter';
+import SpeechAssistant from './SpeechAssistant';
+import ClockWidget from './widgets/ClockWidget';
 import ClockWidget from './widgets/ClockWidget';
 import WeatherWidget from './widgets/WeatherWidget';
 import TopBarService from '@/system/services/TopBarService';
@@ -126,6 +128,7 @@ export default function Desktop() {
   const [appPositions, setAppPositions] = useState({});
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
   const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
+  const [isSpeechAssistantOpen, setIsSpeechAssistantOpen] = useState(false);
 
   // Enable clipboard listener to auto-capture copy events
   useClipboardListener({ enabled: true, autoSave: true });

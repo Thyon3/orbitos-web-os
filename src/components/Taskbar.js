@@ -404,7 +404,7 @@ const Clock = () => {
 
 // --- The Main Taskbar Component ---
 
-export default function Taskbar({ onAvatarEdit, onControlCenterToggle }) {
+export default function Taskbar({ onAvatarEdit, onControlCenterToggle, onSpeechAssistantToggle }) {
   const { state, dispatch } = useApp();
   const { theme } = useTheme();
   const { user } = useAuth();
@@ -492,6 +492,18 @@ export default function Taskbar({ onAvatarEdit, onControlCenterToggle }) {
           title="Control Center"
         >
           <span className="text-white text-lg">🎛️</span>
+        </motion.button>
+
+        <div className={separatorStyle}></div>
+
+        {/* Speech Assistant Trigger */}
+        <motion.button
+          onClick={onSpeechAssistantToggle}
+          className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+          whileHover={{ scale: 1.05 }}
+          title="Speech Assistant"
+        >
+          <span className="text-white text-lg">🎤</span>
         </motion.button>
 
         <div className={separatorStyle}></div>
