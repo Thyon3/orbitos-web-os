@@ -14,6 +14,7 @@ const Terminal = () => {
   const [cwd, setCwd] = useState('~');
   const [user, setUser] = useState('user');
   const [host, setHost] = useState('orbitos');
+  const [isMatrixMode, setIsMatrixMode] = useState(false);
 
   const terminalRef = useRef(null);
   const inputRef = useRef(null);
@@ -376,6 +377,25 @@ KiB Swap:   2097148 total,        0 used,   2097148 free.   1024000 cached`
         }, 2000);
         return 'System shutting down in 2 seconds...';
       }
+    },
+
+    matrix: {
+      description: 'Enter the matrix',
+      execute: () => {
+        setIsMatrixMode(true);
+        return 'Wake up, Neo... The Matrix has you.';
+      }
+    },
+
+    exit: {
+      description: 'Exit terminal or matrix mode',
+      execute: () => {
+        if (isMatrixMode) {
+          setIsMatrixMode(false);
+          return 'Exited the matrix.';
+        }
+        return 'Use window controls to close terminal.';
+      }
     }
   };
 
@@ -481,7 +501,13 @@ KiB Swap:   2097148 total,        0 used,   2097148 free.   1024000 cached`
   };
 
   return (
-    <div className={`h-full flex flex-col ${theme.app.bg} font-mono text-sm`} onClick={handleTerminalClick}>
+    <div
+      className={`h-full flex flex-col font-mono text-sm transition-colors duration-1000 ${isMatrixMode
+          ? 'bg-black !text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)]'
+          : theme.app.bg
+        }`}
+      onClick={handleTerminalClick}
+    >
       {/* Terminal header */}
       <div className={`flex items-center justify-between p-2 border-b ${theme.app.toolbar}`}>
         <div className="flex items-center space-x-2">
