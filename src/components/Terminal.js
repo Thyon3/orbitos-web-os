@@ -503,8 +503,8 @@ KiB Swap:   2097148 total,        0 used,   2097148 free.   1024000 cached`
   return (
     <div
       className={`h-full flex flex-col font-mono text-sm transition-colors duration-1000 ${isMatrixMode
-          ? 'bg-black !text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)]'
-          : theme.app.bg
+        ? 'bg-black !text-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)]'
+        : theme.app.bg
         }`}
       onClick={handleTerminalClick}
     >
@@ -524,7 +524,7 @@ KiB Swap:   2097148 total,        0 used,   2097148 free.   1024000 cached`
       {/* Terminal content */}
       <div
         ref={terminalRef}
-        className="flex-1 overflow-auto p-4"
+        className="flex-1 overflow-auto p-4 terminal-content"
         style={{ minHeight: '200px' }}
       >
         {history.map((entry, index) => (
