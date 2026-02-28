@@ -15,6 +15,7 @@ import EnhancedWindow from './EnhancedWindow';
 import Taskbar from './Taskbar';
 import AvatarEditor from './AvatarEditor';
 import GlobalSearch from './GlobalSearch';
+import ControlCenter from './ControlCenter';
 import TopBarService from '@/system/services/TopBarService';
 import TopBarDropdownService from '@/system/services/TopBarDropdownService';
 import TopBarInfoAboutService from '@/system/services/TopBarInfoAboutService';
@@ -118,6 +119,7 @@ export default function Desktop() {
   const { isSearchOpen, closeSearch } = useSearch();
   const [appPositions, setAppPositions] = useState({});
   const [showAvatarEditor, setShowAvatarEditor] = useState(false);
+  const [isControlCenterOpen, setIsControlCenterOpen] = useState(false);
 
   // Enable clipboard listener to auto-capture copy events
   useClipboardListener({ enabled: true, autoSave: true });
@@ -340,7 +342,7 @@ export default function Desktop() {
             }),
           );
         },
-        onFindInFiles: () => {},
+        onFindInFiles: () => { },
         onFindNext: () => {
           window.dispatchEvent(new Event('find-next'));
         },
@@ -361,23 +363,23 @@ export default function Desktop() {
             );
           }
         },
-        onSelectFindPrevious: () => {},
-        onFindVolatileNext: () => {},
-        onFindVolatilePrevious: () => {},
-        onIncrementalSearch: () => {},
-        onSearchResults: () => {},
-        onNextSearchResult: () => {},
-        onPreviousSearchResult: () => {},
-        onGoTo: () => {},
-        onGoToMatchingBrace: () => {},
-        onSelectBetween: () => {},
-        onStyleAllOccurrences: () => {},
-        onStyleOneToken: () => {},
-        onClearStyle: () => {},
-        onJumpUp: () => {},
-        onJumpDown: () => {},
-        onCopyStyledText: () => {},
-        onFindInRange: () => {},
+        onSelectFindPrevious: () => { },
+        onFindVolatileNext: () => { },
+        onFindVolatilePrevious: () => { },
+        onIncrementalSearch: () => { },
+        onSearchResults: () => { },
+        onNextSearchResult: () => { },
+        onPreviousSearchResult: () => { },
+        onGoTo: () => { },
+        onGoToMatchingBrace: () => { },
+        onSelectBetween: () => { },
+        onStyleAllOccurrences: () => { },
+        onStyleOneToken: () => { },
+        onClearStyle: () => { },
+        onJumpUp: () => { },
+        onJumpDown: () => { },
+        onCopyStyledText: () => { },
+        onFindInRange: () => { },
         hasChanges: false,
         hasSelection: false,
       };
@@ -389,7 +391,7 @@ export default function Desktop() {
       dropdownService.addDropdown(editDropdown.label, editDropdown.items);
       dropdownService.addDropdown(searchDropdown.label, searchDropdown.items);
 
-      const infoService = new TopBarInfoAboutService({ onShowAbout: () => {} });
+      const infoService = new TopBarInfoAboutService({ onShowAbout: () => { } });
 
       return {
         topBarService,
@@ -472,7 +474,16 @@ export default function Desktop() {
       {state.openApps.map((app) => renderWindow(app))}
 
       {/* Taskbar */}
-      <Taskbar onAvatarEdit={() => setShowAvatarEditor(true)} />
+      <Taskbar
+        onAvatarEdit={() => setShowAvatarEditor(true)}
+        onControlCenterToggle={() => setIsControlCenterOpen(!isControlCenterOpen)}
+      />
+
+      {/* Control Center */}
+      <ControlCenter
+        isOpen={isControlCenterOpen}
+        onClose={() => setIsControlCenterOpen(false)}
+      />
 
       {/* Avatar Editor */}
       {showAvatarEditor && (

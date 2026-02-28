@@ -135,13 +135,12 @@ const OpenAppsTray = ({ openApps, activeApp, onAppClick, theme, dispatch }) => (
         >
           <IconDisplay icon={app.icon} alt={app.name} className="w-10 h-10" />
           <div
-            className={`absolute bottom-1 w-1.5 h-1.5 rounded-full transition-colors ${
-              isActive
-                ? 'bg-white'
-                : isMinimized
-                  ? 'bg-yellow-400'
-                  : 'bg-gray-400'
-            }`}
+            className={`absolute bottom-1 w-1.5 h-1.5 rounded-full transition-colors ${isActive
+              ? 'bg-white'
+              : isMinimized
+                ? 'bg-yellow-400'
+                : 'bg-gray-400'
+              }`}
           />
         </motion.button>
       );
@@ -235,9 +234,8 @@ const Clock = () => {
       days.push(
         <div
           key={day}
-          className={`w-8 h-8 flex items-center justify-center text-sm rounded ${
-            isToday ? 'bg-blue-400 text-white' : 'text-white hover:bg-white/10'
-          }`}
+          className={`w-8 h-8 flex items-center justify-center text-sm rounded ${isToday ? 'bg-blue-400 text-white' : 'text-white hover:bg-white/10'
+            }`}
         >
           {day}
         </div>,
@@ -260,11 +258,10 @@ const Clock = () => {
             setShowYearPicker(false);
             setShowMonthPicker(true);
           }}
-          className={`px-3 py-2 text-center cursor-pointer rounded ${
-            year === currentYear
-              ? 'bg-blue-400 text-white'
-              : 'text-white hover:bg-white/10'
-          }`}
+          className={`px-3 py-2 text-center cursor-pointer rounded ${year === currentYear
+            ? 'bg-blue-400 text-white'
+            : 'text-white hover:bg-white/10'
+            }`}
         >
           {year}
         </div>,
@@ -301,11 +298,10 @@ const Clock = () => {
             setSelectedMonth(index);
             setShowMonthPicker(false);
           }}
-          className={`px-3 py-2 text-center cursor-pointer rounded ${
-            isCurrentMonth
-              ? 'bg-blue-400 text-white'
-              : 'text-white hover:bg-white/10'
-          }`}
+          className={`px-3 py-2 text-center cursor-pointer rounded ${isCurrentMonth
+            ? 'bg-blue-400 text-white'
+            : 'text-white hover:bg-white/10'
+            }`}
         >
           {month}
         </div>
@@ -408,7 +404,7 @@ const Clock = () => {
 
 // --- The Main Taskbar Component ---
 
-export default function Taskbar({ onAvatarEdit }) {
+export default function Taskbar({ onAvatarEdit, onControlCenterToggle }) {
   const { state, dispatch } = useApp();
   const { theme } = useTheme();
   const { user } = useAuth();
@@ -484,6 +480,18 @@ export default function Taskbar({ onAvatarEdit }) {
           <span className="text-white text-sm font-medium hidden sm:block">
             Groups
           </span>
+        </motion.button>
+
+        <div className={separatorStyle}></div>
+
+        {/* Control Center Trigger */}
+        <motion.button
+          onClick={onControlCenterToggle}
+          className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+          whileHover={{ scale: 1.05 }}
+          title="Control Center"
+        >
+          <span className="text-white text-lg">🎛️</span>
         </motion.button>
 
         <div className={separatorStyle}></div>
