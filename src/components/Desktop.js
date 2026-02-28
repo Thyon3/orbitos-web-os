@@ -466,7 +466,7 @@ export default function Desktop() {
       }}
     >
       {/* Desktop Widgets Area */}
-      <div className="absolute top-20 left-10 flex flex-col pointer-events-none z-0">
+      <div className="absolute top-24 left-12 flex flex-col space-y-4 pointer-events-none z-0 text-shadow-lg">
         <ClockWidget />
         <WeatherWidget />
       </div>
