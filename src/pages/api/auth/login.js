@@ -15,24 +15,40 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Email and password required' });
     }
 
-    const user = await User.findOne({ email, isActive: true });
-    if (!user || !(await user.comparePassword(password))) {
+    const user = await User.findOne({ email: email.toLowerCase().trim(), isActive: true });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    if (user.isLocked && user.isLocked()) {
+      return res.status(423).json({ error: 'Account locked due to too many failed attempts' });
+    }
+
+    const match = await user.comparePassword(password);
+    if (!match) {
+      await user.incLoginAttempts();
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     user.lastLogin = new Date();
-    
-    // Set createdAt if it doesn't exist (for existing users)
-    if (!user.createdAt) {
-      user.createdAt = new Date();
-    }
-    
-    await user.save();
+    await user.updateOne({
+      $set: { lastLogin: user.lastLogin, loginAttempts: 0 },
+      $unset: { lockUntil: 1 },
+      $setOnInsert: { createdAt: user.createdAt || new Date() }
+    });
 
     const token = generateToken(user._id);
-    const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-
-    res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=${maxAge / 1000}; SameSite=Strict`);
+    const maxAgeSeconds = rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60;
+    const isProd = process.env.NODE_ENV === 'production';
+    const cookieParts = [
+      `token=${token}`,
+      'HttpOnly',
+      'Path=/',
+      `Max-Age=${maxAgeSeconds}`,
+      'SameSite=Strict',
+    ];
+    if (isProd) cookieParts.push('Secure');
+    res.setHeader('Set-Cookie', cookieParts.join('; '));
 
     res.json({
       message: 'Login successful',
@@ -48,6 +64,7 @@ export default async function handler(req, res) {
       token
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ error: 'Server error during login' });
   }
 }

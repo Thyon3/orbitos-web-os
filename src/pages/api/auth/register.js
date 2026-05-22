@@ -9,7 +9,11 @@ export default async function handler(req, res) {
 
   try {
     await dbConnect();
-    const { username, email, password, displayName } = req.body;
+    let { username, email, password, displayName } = req.body;
+
+    username = username?.trim();
+    email = email?.toLowerCase().trim();
+    displayName = displayName?.trim();
 
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'Username, email and password required' });
@@ -35,8 +39,17 @@ export default async function handler(req, res) {
     await user.save();
 
     const token = generateToken(user._id);
-    
-    res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}; SameSite=Strict`);
+    const maxAgeSeconds = 7 * 24 * 60 * 60; // 7 days
+    const isProd = process.env.NODE_ENV === 'production';
+    const cookieParts = [
+      `token=${token}`,
+      'HttpOnly',
+      'Path=/',
+      `Max-Age=${maxAgeSeconds}`,
+      'SameSite=Strict',
+    ];
+    if (isProd) cookieParts.push('Secure');
+    res.setHeader('Set-Cookie', cookieParts.join('; '));
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -52,6 +65,7 @@ export default async function handler(req, res) {
       token
     });
   } catch (error) {
+    console.error('Register error:', error);
     res.status(500).json({ error: 'Server error during registration' });
   }
 }

@@ -24,7 +24,7 @@ export const ClipboardProvider = ({ children }) => {
       if (filters.pinned !== undefined) queryParams.append('pinned', filters.pinned);
       if (filters.limit) queryParams.append('limit', filters.limit);
 
-      const response = await fetch(`/api/clipboard?${queryParams.toString()}`);
+      const response = await fetch(`/api/clipboard?${queryParams.toString()}`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setClipboardItems(data.items || []);
@@ -42,6 +42,7 @@ export const ClipboardProvider = ({ children }) => {
       const response = await fetch('/api/clipboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(item),
       });
 
@@ -61,6 +62,7 @@ export const ClipboardProvider = ({ children }) => {
     try {
       const response = await fetch(`/api/clipboard/${itemId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -81,6 +83,7 @@ export const ClipboardProvider = ({ children }) => {
       const response = await fetch(`/api/clipboard/${itemId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ isPinned: !item.isPinned }),
       });
 
@@ -101,6 +104,7 @@ export const ClipboardProvider = ({ children }) => {
     try {
       const response = await fetch(`/api/clipboard/clear?keepPinned=${keepPinned}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -119,7 +123,7 @@ export const ClipboardProvider = ({ children }) => {
   // Load stats
   const loadStats = useCallback(async () => {
     try {
-      const response = await fetch('/api/clipboard/stats');
+      const response = await fetch('/api/clipboard/stats', { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setStats(data);

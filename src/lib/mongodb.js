@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/orbitos';
 
 let cached = global.mongoose;
 
@@ -21,3 +21,5 @@ async function dbConnect() {
 }
 
 export default dbConnect;
+// Export connectDB as an alias for compatibility
+export const connectDB = dbConnect;

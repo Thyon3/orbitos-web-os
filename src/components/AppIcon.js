@@ -173,7 +173,7 @@ export default function AppIcon({ app, position, onPositionChange, allApps }) {
     setTimeout(() => setWasDragged(false), 100);
   };
 
-  const isImagePath = app.icon.startsWith('/');
+  const isImagePath = app.icon?.startsWith('/') || false;
 
   return (
     <>
@@ -245,7 +245,7 @@ export default function AppIcon({ app, position, onPositionChange, allApps }) {
             />
           ) : (
             <span className="text-5xl flex items-center justify-center h-full">
-              {app.icon}
+              {app.icon || '📦'}
             </span>
           )}
           {/* Shortcut indicator */}

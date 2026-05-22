@@ -52,7 +52,7 @@ export const DashboardProvider = ({ children }) => {
   const loadSystemMetrics = useCallback(async () => {
     setLoading(prev => ({ ...prev, system: true }));
     try {
-      const response = await fetch('/api/metrics/system');
+      const response = await fetch('/api/metrics/system', { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setMetrics(prev => ({ ...prev, system: data.metrics }));
@@ -78,7 +78,7 @@ export const DashboardProvider = ({ children }) => {
   const loadAppMetrics = useCallback(async (period = 'week') => {
     setLoading(prev => ({ ...prev, apps: true }));
     try {
-      const response = await fetch(`/api/metrics/apps?period=${period}`);
+      const response = await fetch(`/api/metrics/apps?period=${period}`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setMetrics(prev => ({ ...prev, apps: data }));
@@ -102,7 +102,7 @@ export const DashboardProvider = ({ children }) => {
   const loadHealthMetrics = useCallback(async (period = 'week') => {
     setLoading(prev => ({ ...prev, health: true }));
     try {
-      const response = await fetch(`/api/metrics/health?period=${period}`);
+      const response = await fetch(`/api/metrics/health?period=${period}`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setMetrics(prev => ({ ...prev, health: data }));
@@ -126,7 +126,7 @@ export const DashboardProvider = ({ children }) => {
   const loadTrendData = useCallback(async (hours = 24) => {
     setLoading(prev => ({ ...prev, trends: true }));
     try {
-      const response = await fetch(`/api/metrics?type=trend&hours=${hours}`);
+      const response = await fetch(`/api/metrics?type=trend&hours=${hours}`, { credentials: 'include' });
       if (response.ok) {
         const data = await response.json();
         setMetrics(prev => ({ ...prev, trends: data.trend || [] }));
@@ -144,6 +144,7 @@ export const DashboardProvider = ({ children }) => {
       const response = await fetch('/api/metrics', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(metricsData),
       });
 
@@ -163,6 +164,7 @@ export const DashboardProvider = ({ children }) => {
       const response = await fetch('/api/metrics/apps', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ appId, appName, action, metadata }),
       });
 
@@ -181,6 +183,7 @@ export const DashboardProvider = ({ children }) => {
       const response = await fetch('/api/metrics/health', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ type, severity, message, suggestion }),
       });
 
@@ -210,6 +213,7 @@ export const DashboardProvider = ({ children }) => {
       const response = await fetch('/api/metrics/health', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ issueIds }),
       });
 
