@@ -18,7 +18,6 @@ import GlobalSearch from './GlobalSearch';
 import ControlCenter from './ControlCenter';
 import SpeechAssistant from './SpeechAssistant';
 import ClockWidget from './widgets/ClockWidget';
-import ClockWidget from './widgets/ClockWidget';
 import WeatherWidget from './widgets/WeatherWidget';
 import TopBarService from '@/system/services/TopBarService';
 import TopBarDropdownService from '@/system/services/TopBarDropdownService';
