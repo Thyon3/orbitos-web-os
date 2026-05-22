@@ -6,7 +6,7 @@ import {
     SpeakerWaveIcon,
     SunIcon,
     WifiIcon,
-    BluetoothIcon,
+    SignalIcon,
     PowerIcon,
     Cog6ToothIcon
 } from '@heroicons/react/24/outline';
@@ -66,7 +66,7 @@ const ControlCenter = ({ isOpen, onClose }) => {
                                         : 'bg-white/10 hover:bg-white/20'
                                     }`}
                             >
-                                <BluetoothIcon className="w-8 h-8 mb-2" />
+                                <SignalIcon className="w-8 h-8 mb-2" />
                                 <span className="text-sm font-medium">Bluetooth</span>
                                 <span className="text-[10px] opacity-70">{isBluetoothEnabled ? 'On' : 'Off'}</span>
                             </button>
