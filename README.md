@@ -3,6 +3,34 @@
 
 A Web OS-style application built with Next.js and Node.js for group collaboration. Features a desktop-like interface with draggable windows, a taskbar, and multiple applications.
 
+## � Table of Contents
+
+- [Screenshots](#-screenshots)
+- [Features](#features)
+- [Live Demo](#-live-demo)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Setup Instructions](#setup-instructions)
+- [Available Scripts](#available-scripts)
+- [API Endpoints](#api-endpoints)
+- [Applications](#applications)
+- [Customization](#-how-to-customize-the-look-and-feel)
+- [Contributing](#contributing)
+- [Deployment](#deployment)
+- [Troubleshooting](#-troubleshooting)
+- [Future Enhancements](#future-enhancements)
+- [License](#license)
+
+## �📸 Screenshots
+
+### Homepage / Desktop Interface
+![OrbitOS Homepage](./screenshots/homepage.png)
+*The main desktop interface with draggable windows, taskbar, and customizable wallpaper*
+
+### Authentication
+![OrbitOS Authentication](./screenshots/auth.png)
+*Secure user authentication with login and registration*
+
 ## 🎨 How to Customize the Look and Feel
 
 We've built a powerful theme and wallpaper system to make it easy to change how OrbitOS looks.
@@ -52,21 +80,34 @@ The new wallpaper will now appear in the Settings app automatically.
 
 ## Features
 
--   🖥️ Desktop-like UI with wallpaper background
--   📱 Draggable, minimizable, and closable windows
--   📋 **Modern, full-width taskbar with "glass" style icons, a Start Menu, and a live clock**
--   📝 Built-in applications (Notes, Browser, Settings)
--   🔗 RESTful API for user and file management
--   ⚡ Real-time state management with React Context
--   🎨 **Powerful Theme Engine:** Easily change all colors and styles from central theme files.
--   🖼️ **Customizable Wallpapers:** Change the desktop background from the Settings app.
+-   🖥️ **Desktop-like UI** with wallpaper background and window management
+-   📱 **Draggable Windows** - Minimize, maximize, and close windows just like a real OS
+-   📋 **Modern Taskbar** - Full-width glass-style taskbar with Start Menu and live clock
+-   🔐 **User Authentication** - Secure login and registration with JWT tokens
+-   📝 **Built-in Applications** - Notes, Browser, Settings, File Manager, and more
+-   🔗 **RESTful API** - Complete backend for user and file management
+-   ⚡ **Real-time State Management** - Powered by React Context API
+-   🎨 **Powerful Theme Engine** - Easily customize colors and styles from central theme files
+-   🖼️ **Customizable Wallpapers** - Change desktop backgrounds from the Settings app
+-   💾 **MongoDB Integration** - Persistent data storage with MongoDB Atlas
+-   🌐 **Production Ready** - Fully deployable to Vercel with environment configuration
+-   📱 **Responsive Design** - Works across different screen sizes
+
+## 🚀 Live Demo
+
+**Production URL:** [https://orbitos-web-os.vercel.app](https://orbitos-web-os.vercel.app)
+
+Try it out and experience a full web-based operating system!
 
 ## Tech Stack
 
--   **Frontend**: Next.js 13+, React 18, Tailwind CSS, **Framer Motion**
--   **Backend**: Node.js, Express
+-   **Frontend**: Next.js 13+, React 18, Tailwind CSS, Framer Motion
+-   **Backend**: Next.js API Routes (Serverless)
+-   **Database**: MongoDB Atlas
+-   **Authentication**: JWT (JSON Web Tokens) with HTTP-only cookies
 -   **Language**: JavaScript
 -   **State Management**: React Context API
+-   **Deployment**: Vercel (Frontend & API), MongoDB Atlas (Database)
 
 ## Project Structure
 
@@ -122,6 +163,7 @@ web-os-project/
 
 -   Node.js 16+ installed
 -   npm or yarn package manager
+-   MongoDB Atlas account (free tier available)
 
 ### Installation
 
@@ -136,54 +178,88 @@ web-os-project/
     npm install
     ```
 
-3.  **Start the development servers**
-
-    **Option 1: Run both servers simultaneously**
+3.  **Configure Environment Variables**
+    
+    Create a `.env` file in the root directory:
     ```bash
-    npm run dev:all
+    cp .env.example .env
     ```
+    
+    Update the `.env` file with your configuration:
+    ```env
+    # Database Configuration
+    MONGODB_URI=your_mongodb_connection_string
+    
+    # JWT Secret Key (Generate a secure random string)
+    JWT_SECRET=your_secure_jwt_secret_key
+    
+    # Environment
+    NODE_ENV=development
+    ```
+    
+    **Important:** 
+    - Get your MongoDB URI from [MongoDB Atlas](https://cloud.mongodb.com/)
+    - Generate a strong JWT_SECRET (use a random string generator)
+    - Never commit your `.env` file to version control
 
-    **Option 2: Run servers separately**
-
-    Terminal 1 (Frontend):
+4.  **Start the development server**
     ```bash
     npm run dev
     ```
 
-    Terminal 2 (Backend):
-    ```bash
-    npm run server
-    ```
-
-4.  **Access the application**
-    -   Frontend: http://localhost:3000
-    -   Backend API: http://localhost:3001
+5.  **Access the application**
+    -   Application: http://localhost:3000
+    -   API Routes: http://localhost:3000/api/*
 
 ## Available Scripts
 
--   `npm run dev` - Start Next.js development server
--   `npm run build` - Build the Next.js application
+-   `npm run dev` - Start Next.js development server (includes API routes)
+-   `npm run build` - Build the Next.js application for production
 -   `npm run start` - Start Next.js production server
--   `npm run server` - Start Express API server
--   `npm run dev:all` - Start both frontend and backend concurrently
+-   `npm run lint` - Run ESLint to check code quality
 
 ## API Endpoints
+
+### Authentication
+
+-   `POST /api/auth/register` - Register new user
+-   `POST /api/auth/login` - User login
+-   `POST /api/auth/logout` - User logout
+-   `GET /api/auth/me` - Get current user info
 
 ### Users
 
 -   `GET /api/users` - Get all users
--   `POST /api/users/register` - Register new user
--   `POST /api/users/login` - User login
+-   `PUT /api/users/preferences` - Update user preferences
 
-### Files
+### Dashboard
 
--   `GET /api/files` - List all files
--   `POST /api/files/upload` - Upload file
--   `DELETE /api/files/:id` - Delete file
+-   `GET /api/dashboard/stats` - Get dashboard statistics
+-   `GET /api/dashboard/widgets` - Get user widgets
+-   `POST /api/dashboard/widgets` - Create new widget
+-   `PATCH /api/dashboard/widgets/:id` - Update widget
+-   `DELETE /api/dashboard/widgets/:id` - Delete widget
 
-### Health Check
+### Clipboard
 
--   `GET /api/health` - Server health status
+-   `GET /api/clipboard` - Get clipboard items
+-   `POST /api/clipboard` - Add clipboard item
+-   `DELETE /api/clipboard/:id` - Delete clipboard item
+
+### Shortcuts
+
+-   `GET /api/shortcuts` - Get keyboard shortcuts
+-   `POST /api/shortcuts` - Create new shortcut
+-   `PATCH /api/shortcuts/:id` - Update shortcut
+-   `DELETE /api/shortcuts/:id` - Delete shortcut
+
+### Wallpapers
+
+-   `GET /api/wallpapers` - Get wallpapers
+-   `POST /api/wallpapers` - Upload wallpaper
+-   `PATCH /api/wallpapers/:id` - Update wallpaper
+-   `DELETE /api/wallpapers/:id` - Delete wallpaper
+-   `POST /api/wallpapers/activate` - Set active wallpaper
 
 ## Applications
 
@@ -304,35 +380,139 @@ web-os-project/
 
 ## Deployment
 
-### Frontend (Vercel)
+### Deploying to Vercel (Recommended)
 
-```bash
-npm run build
-```
+1.  **Prepare for Production**
+    ```bash
+    npm run build
+    ```
+    Ensure the build completes without errors.
 
-### Backend (Node.js hosting)
+2.  **Push to GitHub**
+    ```bash
+    git add .
+    git commit -m "Ready for deployment"
+    git push origin main
+    ```
 
-```bash
-cd src/server
-node index.js
-```
+3.  **Deploy to Vercel**
+    - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+    - Click "New Project"
+    - Import your GitHub repository
+    - Configure Environment Variables:
+      ```
+      MONGODB_URI=your_mongodb_atlas_connection_string
+      JWT_SECRET=your_secure_jwt_secret_key
+      NODE_ENV=production
+      ```
+    - Click "Deploy"
+
+4.  **Configure MongoDB Atlas**
+    - Go to [MongoDB Atlas](https://cloud.mongodb.com/)
+    - Navigate to "Network Access"
+    - Click "+ ADD IP ADDRESS"
+    - Select "ALLOW ACCESS FROM ANYWHERE" (0.0.0.0/0)
+    - This allows Vercel's dynamic IPs to connect
+
+5.  **Test Your Deployment**
+    - Visit your Vercel URL
+    - Test registration and login
+    - Verify all features work correctly
+
+### Important Notes
+
+- **Environment Variables**: Make sure all environment variables are set in Vercel dashboard
+- **MongoDB Atlas**: Must whitelist all IPs (0.0.0.0/0) for Vercel to connect
+- **Cookie Settings**: Already configured for production with `SameSite=Lax`
+- **Build Cache**: If you encounter issues, clear the build cache in Vercel
+
+For detailed deployment instructions, see `DEPLOYMENT_GUIDE.md`
 
 ## Future Enhancements
 
--   [ ] User authentication with JWT
--   [ ] Real database integration (MongoDB/PostgreSQL)
--   [ ] File system with actual file storage
+-   [x] **User authentication with JWT** ✅
+-   [x] **Real database integration (MongoDB)** ✅
+-   [x] **Dark/light theme switching** ✅
+-   [x] **Notification system** ✅
+-   [x] **Production deployment** ✅
+-   [ ] File system with cloud storage integration
 -   [ ] Real-time collaboration features
 -   [ ] Plugin system for custom apps
--   [ ] Mobile responsive design
--   [x] **Dark/light theme switching**
--   [x] **Notification system**
--   [ ] More theme options (e.g., Solarized, Dracula)
+-   [ ] Mobile responsive design improvements
+-   [ ] More theme options (e.g., Solarized, Dracula, Nord)
+-   [ ] Desktop notifications API integration
+-   [ ] Multi-language support (i18n)
+-   [ ] Progressive Web App (PWA) features
+-   [ ] Keyboard shortcut customization UI
+-   [ ] Window snapping and tiling
+-   [ ] Virtual desktops/workspaces
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**"Server error during login"**
+- **Cause**: MongoDB Atlas is blocking the connection
+- **Solution**: Whitelist all IPs (0.0.0.0/0) in MongoDB Atlas Network Access
+- See `MONGODB_ATLAS_FIX.md` for detailed instructions
+
+**"No token provided" errors**
+- **Cause**: Cookies not being sent with API requests
+- **Solution**: Ensure `credentials: 'include'` is in all fetch calls (already fixed)
+- Clear browser cookies and try again
+
+**Build errors**
+- **Solution**: Delete `.next` folder and rebuild
+  ```bash
+  rm -rf .next
+  npm run build
+  ```
+
+**MongoDB connection errors locally**
+- **Cause**: Your IP is not whitelisted in MongoDB Atlas
+- **Solution**: Add your current IP address in MongoDB Atlas Network Access
+
+**Environment variables not working**
+- **Cause**: `.env` file not loaded or incorrect format
+- **Solution**: 
+  - Ensure `.env` file is in the root directory
+  - Restart the development server after changing `.env`
+  - Check for typos in variable names
+
+### Getting Help
+
+- Check the documentation files: `DEPLOYMENT_GUIDE.md`, `MONGODB_ATLAS_FIX.md`, `VERCEL_FIX.md`
+- Create an issue in the repository with detailed error messages
+- Include browser console logs and server logs when reporting issues
 
 ## License
 
 MIT License - feel free to use this project for learning and development.
 
-## Support
+## 👥 Contributors
 
-For questions or issues, please create an issue in the repository or contact the development team.
+Special thanks to all contributors who have helped build OrbitOS:
+
+- **@Gordon.H** - Notes App with rich text editor
+- **@codehubbers** - Core system architecture and development
+
+Want to contribute? Check out the Contributing section above!
+
+## 📞 Support
+
+For questions or issues:
+- 📝 Create an issue in the [GitHub repository](https://github.com/codehubbers/OrbitOS/issues)
+- 📧 Contact the development team
+- 📚 Check the documentation files in the repository
+
+## 🌟 Show Your Support
+
+If you find this project helpful, please consider:
+- ⭐ Starring the repository
+- 🐛 Reporting bugs
+- 💡 Suggesting new features
+- 🤝 Contributing code
+
+---
+
+**Built with ❤️ by the OrbitOS Team**
