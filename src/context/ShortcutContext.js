@@ -25,7 +25,9 @@ export const ShortcutProvider = ({ children }) => {
       if (filters.enabled !== undefined) queryParams.append('enabled', filters.enabled);
       if (filters.scope) queryParams.append('scope', filters.scope);
 
-      const response = await fetch(`/api/shortcuts?${queryParams.toString()}`);
+      const response = await fetch(`/api/shortcuts?${queryParams.toString()}`, {
+        credentials: 'include',
+      });
       if (response.ok) {
         const data = await response.json();
         setShortcuts(data.shortcuts || []);
@@ -54,6 +56,7 @@ export const ShortcutProvider = ({ children }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(shortcutData),
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -78,6 +81,7 @@ export const ShortcutProvider = ({ children }) => {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -104,6 +108,7 @@ export const ShortcutProvider = ({ children }) => {
     try {
       const response = await fetch(`/api/shortcuts/${shortcutId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -126,6 +131,7 @@ export const ShortcutProvider = ({ children }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ category, resetType }),
+        credentials: 'include',
       });
 
       if (response.ok) {

@@ -40,7 +40,9 @@ export function SettingsProvider({ children }) {
     setWallpaper(newWallpaper);
 
     try {
-      const response = await fetch('/api/auth/me');
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include',
+      });
       if (response.ok) {
         const { user } = await response.json();
         const updatedPreferences = {
@@ -52,6 +54,7 @@ export function SettingsProvider({ children }) {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ preferences: updatedPreferences }),
+          credentials: 'include',
         });
       }
     } catch (error) {

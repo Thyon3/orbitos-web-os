@@ -38,7 +38,9 @@ export const WallpaperProvider = ({ children }) => {
       if (filters.sortBy) queryParams.append('sortBy', filters.sortBy);
       if (filters.sortOrder) queryParams.append('sortOrder', filters.sortOrder);
 
-      const response = await fetch(`/api/wallpapers?${queryParams.toString()}`);
+      const response = await fetch(`/api/wallpapers?${queryParams.toString()}`, {
+        credentials: 'include',
+      });
       if (response.ok) {
         const data = await response.json();
         setWallpapers(data.wallpapers || []);
@@ -108,6 +110,7 @@ export const WallpaperProvider = ({ children }) => {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -136,6 +139,7 @@ export const WallpaperProvider = ({ children }) => {
     try {
       const response = await fetch(`/api/wallpapers/${wallpaperId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -161,6 +165,7 @@ export const WallpaperProvider = ({ children }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wallpaperId }),
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -269,7 +274,9 @@ export const WallpaperProvider = ({ children }) => {
   // Load stats
   const loadStats = useCallback(async () => {
     try {
-      const response = await fetch('/api/wallpapers/stats');
+      const response = await fetch('/api/wallpapers/stats', {
+        credentials: 'include',
+      });
       if (response.ok) {
         const data = await response.json();
         setStats(data);
