@@ -4,8 +4,15 @@ export default async function handler(req, res) {
   }
 
   const isProd = process.env.NODE_ENV === 'production';
-  const cookieParts = ['token=;', 'HttpOnly', 'Path=/', 'Max-Age=0', 'SameSite=Strict'];
+  const cookieParts = [
+    'token=;',
+    'HttpOnly',
+    'Path=/',
+    'Max-Age=0',
+    'SameSite=Lax' // Changed from Strict to Lax
+  ];
   if (isProd) cookieParts.push('Secure');
+  
   res.setHeader('Set-Cookie', cookieParts.join('; '));
   res.json({ message: 'Logged out successfully' });
 }
