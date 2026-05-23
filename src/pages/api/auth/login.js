@@ -40,14 +40,17 @@ export default async function handler(req, res) {
     const token = generateToken(user._id);
     const maxAgeSeconds = rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60;
     const isProd = process.env.NODE_ENV === 'production';
+    
+    // Set cookie with proper production settings
     const cookieParts = [
       `token=${token}`,
       'HttpOnly',
       'Path=/',
       `Max-Age=${maxAgeSeconds}`,
-      'SameSite=Strict',
+      'SameSite=Lax', // Changed from Strict to Lax for better compatibility
     ];
     if (isProd) cookieParts.push('Secure');
+    
     res.setHeader('Set-Cookie', cookieParts.join('; '));
 
     res.json({
