@@ -19,7 +19,9 @@ export function DriveProvider({ children }) {
     setIsLoading(true);
     try {
       // First, check if we are authenticated and get the user's email
-      const authCheckResponse = await fetch('/api/auth/google/me');
+      const authCheckResponse = await fetch('/api/auth/google/me', {
+        credentials: 'include',
+      });
       if (!authCheckResponse.ok) {
         throw new Error('Not authenticated');
       }
@@ -28,7 +30,9 @@ export function DriveProvider({ children }) {
       setIsConnected(true);
 
       // If authenticated, then fetch the files
-      const filesResponse = await fetch('/api/files/gdrive');
+      const filesResponse = await fetch('/api/files/gdrive', {
+        credentials: 'include',
+      });
       if (!filesResponse.ok) throw new Error('Failed to fetch files');
       const driveFiles = await filesResponse.json();
       setFiles(driveFiles);
@@ -54,7 +58,9 @@ export function DriveProvider({ children }) {
   };
 
   const disconnectFromDrive = async () => {
-    await fetch('/api/auth/google/logout');
+    await fetch('/api/auth/google/logout', {
+      credentials: 'include',
+    });
     await clearDriveCache();
     setIsConnected(false);
     setUserEmail(null);
